@@ -34,13 +34,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         successHandler.setTargetUrlParameter("redirectTo");
         successHandler.setDefaultTargetUrl(this.adminServer.path("/"));
 
-        http.authorizeRequests(
-                (authorizeRequests) -> authorizeRequests.antMatchers(this.adminServer.path("/assets/**")).permitAll()
+        http.authorizeRequests(authorizeRequests ->
+                authorizeRequests
+                        .antMatchers(this.adminServer.path("/assets/**")).permitAll()
                         .antMatchers(this.adminServer.path("/actuator/info")).permitAll()
                         .antMatchers(this.adminServer.path("/actuator/health")).permitAll()
-                        .antMatchers(this.adminServer.path("/login")).permitAll().anyRequest().authenticated())
-                .formLogin((formLogin) -> formLogin.loginPage(this.adminServer.path("/login")).successHandler(successHandler).and())
-                .logout((logout) -> logout.logoutUrl(this.adminServer.path("/logout")))
+                        .antMatchers(this.adminServer.path("/login")).permitAll()
+                        .anyRequest().authenticated())
+                .formLogin(formLogin -> formLogin.loginPage(this.adminServer.path("/login")).successHandler(successHandler))
+                .logout(logout -> logout.logoutUrl(this.adminServer.path("/logout")))
                 .httpBasic(Customizer.withDefaults())
                 .csrf((csrf) -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .ignoringRequestMatchers(
